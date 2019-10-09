@@ -1,12 +1,10 @@
 const int A1AD = 2;
 const int A1BD = 3;
-
 const int B1AD = 4;
 const int B1BD = 5;
 
 const int A1AE = 6;
 const int A1BE = 7;
-
 const int B1AE = 8;
 const int B1BE = 9;
 
@@ -114,13 +112,9 @@ void left(){
 
 void loop() {
   front();
-  delay(2000);
   back();
-  delay(2000);
   right();
-  delay(2000);
   left();
-  delay(2000);
    
 }
 

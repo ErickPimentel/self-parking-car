@@ -1,12 +1,12 @@
-const int A1AD = 2;
-const int A1BD = 3;
-const int B1AD = 4;
-const int B1BD = 5;
+const int A1AD = 0;
+const int A1BD = 1;
+const int B1AD = 2;
+const int B1BD = 3;
 
-const int A1AE = 6;
-const int A1BE = 7;
-const int B1AE = 8;
-const int B1BE = 9;
+const int A1AE = 4;
+const int A1BE = 5;
+const int B1AE = 6;
+const int B1BE = 7;
 
 void setup() {
   pinMode(B1AD,OUTPUT);
@@ -115,7 +115,6 @@ void loop() {
   back();
   right();
   left();
-   
 }
 
 

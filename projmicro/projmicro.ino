@@ -1,3 +1,5 @@
+#include <Ultrasonic.h>
+
 const int A1AD = 0;
 const int A1BD = 1;
 const int B1AD = 2;

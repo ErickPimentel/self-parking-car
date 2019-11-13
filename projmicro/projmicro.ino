@@ -17,25 +17,12 @@ const int motors_ports[8] = {
 
 
 void setup(){
-  // setup motors ports to output
   for (int i = 0; i < 8; i++){
     pinMode(motors_ports[i], OUTPUT);
-  }
-        
-        pinMode(4, OUTPUT);
-        pinMode(5, OUTPUT);
-      
-
-//      digitalWrite(MOTOR_B_0, HIGH);
-//      digitalWrite(MOTOR_B_1, LOW);
-// digitalWrite(MOTOR_B_1, LOW);
-      //digitalWrite(MOTOR_A_0, HIGH);
-      //digitalWrite(MOTOR_A_1, LOW);
-      
+  }      
 }
 
 
 void loop(){
-         analogWrite(4, 0);
-        analogWrite(5, 250);
+
 }

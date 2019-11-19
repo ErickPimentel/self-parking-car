@@ -44,8 +44,28 @@ void loop(){
   int joy_xaxis = analogRead(AXIS_X) - 490;
   int joy_yaxis = analogRead(AXIS_Y) - 490;
 
-  Serial.println(joy_xaxis);
+  Serial.print(joy_xaxis);
+  Serial.print(" ");
+  Serial.println(joy_yaxis);
 
+  if (joy_yaxis < 10){
+     analogWrite(MOTOR_B_0, map(joy_yaxis * -1, 0, 533, 0, 255));
+     analogWrite(MOTOR_B_1, 0);
+
+     analogWrite(MOTOR_A_0, map(joy_yaxis * -1, 0, 533, 0, 255));
+     analogWrite(MOTOR_A_1, 0);
+
+     analogWrite(MOTOR_C_0, map(joy_yaxis * -1, 0, 533, 0, 255));
+     analogWrite(MOTOR_C_1, 0);
+
+     analogWrite(MOTOR_D_0, map(joy_yaxis * -1, 0, 533, 0, 255));
+     analogWrite(MOTOR_D_1, 0);
+  }
+
+  
+
+
+/*
   if (joy_xaxis > 10){
      analogWrite(MOTOR_B_0, map(joy_xaxis, 0, 533, 0, 255));
      analogWrite(MOTOR_B_1, 0);
@@ -84,5 +104,7 @@ void loop(){
      analogWrite(MOTOR_D_0, 0);
      analogWrite(MOTOR_D_1, 0); 
    }
+
+   */
   
 }

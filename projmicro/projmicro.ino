@@ -41,80 +41,49 @@ void setup(){
 
 
 void loop(){
-  int joy_xaxis = analogRead(AXIS_X) - 500;
-  int joy_yaxis = analogRead(AXIS_Y) - 500;
+  int y = analogRead(AXIS_Y);
+  int x = analogRead(AXIS_X);
 
-  joy_xaxis = map(joy_xaxis, 0, 520, 0, 255);
-  joy_yaxis = map(joy_yaxis, 0, 520, 0, 255);
-  
-  Serial.print(joy_xaxis);
-  Serial.print(" ");
-  Serial.println(joy_yaxis);
+  int direita = 100;
+  int esquerda = 100;
 
-  
-  if (joy_yaxis < -10){ //front (or forward)
-    analogWrite(MOTOR_A_0, joy_yaxis * -1);
-    analogWrite(MOTOR_A_1, 0);
+  if(x < 512){ //esquerda
+    direita = 100;
+    esquerda = map(x, 511, 0, 100, 0);
+  }else{       //direita
+    direita = map(x, 512, 1023, 100, 0);
+    esquerda = 100;
+  }
 
-    analogWrite(MOTOR_B_0, joy_yaxis * -1);
-    analogWrite(MOTOR_B_1, 0);
-
-    analogWrite(MOTOR_C_0, joy_yaxis * -1);
-    analogWrite(MOTOR_C_1, 0);
-
-    analogWrite(MOTOR_D_0, joy_yaxis * -1);
-    analogWrite(MOTOR_D_1, 0);
-    }
-  else if(joy_yaxis > 10){ //back
-     analogWrite(MOTOR_B_0, 0);
-     analogWrite(MOTOR_B_1, joy_yaxis);
-
-     analogWrite(MOTOR_A_0, 0);
-     analogWrite(MOTOR_A_1, joy_yaxis);
-
-     analogWrite(MOTOR_C_0, 0);
-     analogWrite(MOTOR_C_1, joy_yaxis);
-
-     analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, joy_yaxis);
-    } /*
-  if (joy_xaxis > 10){ //right
-     analogWrite(MOTOR_B_0, 0);
-     analogWrite(MOTOR_B_1, joy_xaxis);
-
-     analogWrite(MOTOR_A_0, 0);
-     analogWrite(MOTOR_A_1, joy_xaxis);
-
-     analogWrite(MOTOR_C_0, joy_xaxis);
-     analogWrite(MOTOR_C_1, 0);
-
-     analogWrite(MOTOR_D_0, joy_xaxis);
-     analogWrite(MOTOR_D_1, 0);
-     }
-   else if (joy_xaxis < -10){ //left
-     analogWrite(MOTOR_B_0, joy_xaxis * -1);
-     analogWrite(MOTOR_B_1, 0);
-
-     analogWrite(MOTOR_A_0, joy_xaxis * -1);
-     analogWrite(MOTOR_A_1, 0);
-
-     analogWrite(MOTOR_C_0, 0);
-     analogWrite(MOTOR_C_1, joy_xaxis * -1);
-
-     analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, joy_xaxis * -1);
-     }*/
-   else {
-     analogWrite(MOTOR_A_0, 0);
+  if (y < 512){
+    int velocidade = map(y, 511, 0, 0, 255);
+     analogWrite(MOTOR_A_0, velocidade * direita / 100);
      analogWrite(MOTOR_A_1, 0);
      
-     analogWrite(MOTOR_B_0, 0);
+     analogWrite(MOTOR_B_0, velocidade * direita / 100);
      analogWrite(MOTOR_B_1, 0);
 
-     analogWrite(MOTOR_C_0, 0);
+     analogWrite(MOTOR_C_0, velocidade * esquerda / 100);
      analogWrite(MOTOR_C_1, 0);
 
+     analogWrite(MOTOR_D_0, velocidade * esquerda / 100);
+     analogWrite(MOTOR_D_1, 0);
+ 
+    }else{
+     int velocidade = map(y, 512, 1023, 0, 255);
+     analogWrite(MOTOR_A_0, 0);
+     analogWrite(MOTOR_A_1, velocidade * direita / 100);
+
+     analogWrite(MOTOR_B_0, 0);
+     analogWrite(MOTOR_B_1, velocidade * direita / 100);
+     
+     analogWrite(MOTOR_C_0, 0);
+     analogWrite(MOTOR_C_1, velocidade * esquerda / 100);
+
      analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, 0); 
-   }
-}
+     analogWrite(MOTOR_D_1, velocidade * esquerda / 100);
+      
+      }
+    
+ 
+    }

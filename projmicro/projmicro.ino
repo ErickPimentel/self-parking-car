@@ -55,7 +55,7 @@ void loop(){
     esquerda = 100;
   }
 
-  if (y < 512){
+  if (y < 500){
     int velocidade = map(y, 511, 0, 0, 255);
      analogWrite(MOTOR_A_0, velocidade * direita / 100);
      analogWrite(MOTOR_A_1, 0);
@@ -69,7 +69,8 @@ void loop(){
      analogWrite(MOTOR_D_0, velocidade * esquerda / 100);
      analogWrite(MOTOR_D_1, 0);
  
-    }else{
+    }
+   else if(y > 520){
      int velocidade = map(y, 512, 1023, 0, 255);
      analogWrite(MOTOR_A_0, 0);
      analogWrite(MOTOR_A_1, velocidade * direita / 100);
@@ -81,9 +82,21 @@ void loop(){
      analogWrite(MOTOR_C_1, velocidade * esquerda / 100);
 
      analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, velocidade * esquerda / 100);
-      
-      }
+     analogWrite(MOTOR_D_1, velocidade * esquerda / 100); 
+     }
+    else{
+     digitalWrite(MOTOR_A_0, 0);
+     digitalWrite(MOTOR_A_1, 0);
+
+     digitalWrite(MOTOR_B_0, 0);
+     digitalWrite(MOTOR_B_1, 0);
+     
+     digitalWrite(MOTOR_C_0, 0);
+     digitalWrite(MOTOR_C_1, 0);
+
+     digitalWrite(MOTOR_D_0, 0);
+     digitalWrite(MOTOR_D_1, 0); 
+    }
     
  
     }

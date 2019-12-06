@@ -21,6 +21,10 @@ const int motors_ports[8] = {
   MOTOR_D_0, MOTOR_D_1
 };
 
+const byte ledPin = 13;
+const byte interruptPin = 20;
+volatile byte state = LOW;
+
 
 void setup(){
   // setup motors ports to output
@@ -32,15 +36,21 @@ void setup(){
   pinMode(AXIS_X, INPUT);
   pinMode(AXIS_Y, INPUT);
 
+  //serial
   Serial.begin(9600);
-  
-  
-  // analogWrite(MOTOR_B_0, 0);
-  // analogWrite(MOTOR_B_1, 0);
+
+  //parking interruption
+  pinMode(ledPin, OUTPUT);
+  pinMode(interruptPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), park , FALLING);
 }
 
 
 void loop(){
+  
+  //set led state
+  digitalWrite(ledPin, state);
+
   int y = analogRead(AXIS_Y);
   int x = analogRead(AXIS_X);
 
@@ -55,7 +65,9 @@ void loop(){
     esquerda = 100;
   }
 
-  if (y < 500){
+  Serial.println(y);
+
+  if (y < 490){ //Front (or forward)
     int velocidade = map(y, 511, 0, 0, 255);
      analogWrite(MOTOR_A_0, velocidade * direita / 100);
      analogWrite(MOTOR_A_1, 0);
@@ -70,7 +82,7 @@ void loop(){
      analogWrite(MOTOR_D_1, 0);
  
     }
-   else if(y > 520){
+   else if(y > 530){ //back
      int velocidade = map(y, 512, 1023, 0, 255);
      analogWrite(MOTOR_A_0, 0);
      analogWrite(MOTOR_A_1, velocidade * direita / 100);
@@ -99,4 +111,48 @@ void loop(){
     }
     
  
-    }
+}
+void park() {
+     state = !state;
+     for (int i = 0; i < 5000; i++){
+     analogWrite(MOTOR_A_0, 0);
+     analogWrite(MOTOR_A_1, 255);
+
+     analogWrite(MOTOR_B_0, 0);
+     analogWrite(MOTOR_B_1, 255);
+     
+     analogWrite(MOTOR_C_0, 0);
+     analogWrite(MOTOR_C_1, 0);
+
+     analogWrite(MOTOR_D_0, 0);
+     analogWrite(MOTOR_D_1, 0);
+      }
+
+     for (int i = 0; i < 2000; i++){
+     analogWrite(MOTOR_A_0, 0);
+     analogWrite(MOTOR_A_1, 255);
+
+     analogWrite(MOTOR_B_0, 0);
+     analogWrite(MOTOR_B_1, 255);
+     
+     analogWrite(MOTOR_C_0, 0);
+     analogWrite(MOTOR_C_1, 255);
+
+     analogWrite(MOTOR_D_0, 0);
+     analogWrite(MOTOR_D_1, 255);
+      }
+
+     for (int i = 0; i < 7500; i++){
+     analogWrite(MOTOR_A_0, 0);
+     analogWrite(MOTOR_A_1, 0);
+
+     analogWrite(MOTOR_B_0, 0);
+     analogWrite(MOTOR_B_1, 0);
+     
+     analogWrite(MOTOR_C_0, 0);
+     analogWrite(MOTOR_C_1, 255);
+
+     analogWrite(MOTOR_D_0, 0);
+     analogWrite(MOTOR_D_1, 255);
+      }
+  }

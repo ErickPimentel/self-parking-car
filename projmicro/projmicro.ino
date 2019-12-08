@@ -21,6 +21,8 @@ const int motors_ports[8] = {
   MOTOR_D_0, MOTOR_D_1
 };
 
+int lista[1000][2];
+
 const byte ledPin = 13;
 const byte interruptPin = 20;
 volatile byte state = LOW;
@@ -48,12 +50,29 @@ void setup(){
 
 void loop(){
   
-  //set led state
+  Serial.println(state);
   digitalWrite(ledPin, state);
 
   int y = analogRead(AXIS_Y);
   int x = analogRead(AXIS_X);
+/*
+  if(state == HIGH){
+    for(int i=0; i < 1000; i++){
+      lista[i][0] = x;
+      lista[i][1] = y;
+      }
+  }else if(state == LOW){
+    for(int i=0; i < 1000; i++){
+      control(lista[i][0], lista[i][1]);
+      }
+    }
+*/
+   control(x, y);
+ 
+}
 
+void control(int x, int y){
+  
   int direita = 100;
   int esquerda = 100;
 
@@ -65,7 +84,7 @@ void loop(){
     esquerda = 100;
   }
 
-  Serial.println(y);
+
 
   if (y < 490){ //Front (or forward)
     int velocidade = map(y, 511, 0, 0, 255);
@@ -97,21 +116,14 @@ void loop(){
      analogWrite(MOTOR_D_1, velocidade * esquerda / 100); 
      }
     else{
-     digitalWrite(MOTOR_A_0, 0);
-     digitalWrite(MOTOR_A_1, 0);
-
-     digitalWrite(MOTOR_B_0, 0);
-     digitalWrite(MOTOR_B_1, 0);
-     
-     digitalWrite(MOTOR_C_0, 0);
-     digitalWrite(MOTOR_C_1, 0);
-
-     digitalWrite(MOTOR_D_0, 0);
-     digitalWrite(MOTOR_D_1, 0); 
+      //end engine noise
+      for(int i = 0; i < 8; i++){
+        digitalWrite(motors_ports[i], 0);
+        }
     }
     
- 
-}
+  
+  }
 void park() {
      state = !state;
      for (int i = 0; i < 5000; i++){

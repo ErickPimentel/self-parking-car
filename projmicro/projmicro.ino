@@ -1,3 +1,8 @@
+#include <Ultrasonic.h>
+
+#include <Ultrasonic.h>
+
+
 // output motors ports
 const int MOTOR_A_0 = 2;
 const int MOTOR_A_1 = 3;
@@ -23,6 +28,11 @@ const int motors_ports[8] = {
 
 // buzzer output
 const int BUZZER_PORT = 12; // must be PWM 
+
+// ultrassonic sensors
+Ultrasonic ultrasonic(22, 23);
+
+
 
 // 7 segment display
 int display_mask_value[10] = {0b11000000, 0b11111001, 0b10100100,
@@ -73,6 +83,28 @@ void loop(){
 
   int x = analogRead(AXIS_X);
   int y = analogRead(AXIS_Y);
+
+
+  float cmMsec;
+  long microsec = ultrasonic.timing();
+  cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);
+
+  if (cmMsec < 10) {
+    while (true) {
+      microsec = ultrasonic.timing();
+      cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);
+
+      if (cmMsec > 15) break;
+
+      int timeMapping = map(cmMsec, 0, 14, 0, 300);
+      analogWrite(BUZZER_PORT, 10);
+      delay(timeMapping/2);
+      analogWrite(BUZZER_PORT, 0);
+      delay(timeMapping/2);
+      
+    }
+  }
+  
 
  if (state == 0){
   // free mode control
@@ -193,5 +225,12 @@ void blink_output_references() {
     PORTL = last_value;
     delay(100);
   }
+}
+
+void blink_buzzer(int how_close){
+  analogWrite(BUZZER_PORT, 52);
+  delay(250);
+  analogWrite(BUZZER_PORT, 0);
+  delay(250);
 }
  

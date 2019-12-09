@@ -21,6 +21,9 @@ const int motors_ports[8] = {
   MOTOR_D_0, MOTOR_D_1
 };
 
+// buzzer output
+const int BUZZER_PORT = 12; // must be PWM 
+
 // 7 segment display
 int display_mask_value[10] = {0b11000000, 0b11111001, 0b10100100,
                   0b10110000, 0b10011001, 0b10010010,
@@ -48,10 +51,13 @@ void setup(){
   pinMode(AXIS_X, INPUT);
   pinMode(AXIS_Y, INPUT);
 
-  //serial
+  // serial
   Serial.begin(9600);
 
-  //parking interruption
+  // buzzer output
+  pinMode(BUZZER_PORT, OUTPUT);
+
+  // parking interruption
   pinMode(ledPin, OUTPUT);
   pinMode(interruptPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPin), state_changer , FALLING);
@@ -96,7 +102,7 @@ void loop(){
 
  } else if (state == 2){
   // executing
-  blink_display();
+  blink_output_references();
   PORTL = letters_mask[1];
   for (int i = 0; i < registred_values; i++){
     Serial.println("Execunting.");
@@ -177,11 +183,13 @@ void display_number(int number) {
 }
 
 
-void blink_display() {
+void blink_output_references() {
   int last_value = PORTL;
   for (int i = 0; i < 5; i++){
     PORTL = 0xFF;
+    analogWrite(BUZZER_PORT, 52);
     delay(100);
+    analogWrite(BUZZER_PORT, 0);
     PORTL = last_value;
     delay(100);
   }

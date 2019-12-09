@@ -31,6 +31,7 @@ const int BUZZER_PORT = 12; // must be PWM
 
 // ultrassonic sensors
 Ultrasonic ultrasonic(22, 23);
+Ultrasonic ultrasonic1(24, 25);
 
 
 
@@ -89,6 +90,10 @@ void loop(){
   long microsec = ultrasonic.timing();
   cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);
 
+  float cmMsec1;
+  long microsec1 = ultrasonic1.timing();
+  cmMsec1 = ultrasonic1.convert(microsec1, Ultrasonic::CM);
+
   if (cmMsec < 10) {
     while (true) {
       microsec = ultrasonic.timing();
@@ -96,7 +101,21 @@ void loop(){
 
       if (cmMsec > 15) break;
 
-      int timeMapping = map(cmMsec, 0, 14, 0, 300);
+      int timeMapping = map(cmMsec, 0, 14, 0, 280);
+      analogWrite(BUZZER_PORT, 10);
+      delay(timeMapping/2);
+      analogWrite(BUZZER_PORT, 0);
+      delay(timeMapping/2);
+      
+    }
+  } else if (cmMsec1 < 10) {
+     while (true) {
+      microsec1 = ultrasonic1.timing();
+      cmMsec1 = ultrasonic1.convert(microsec1, Ultrasonic::CM);
+
+      if (cmMsec1 > 15) break;
+
+      int timeMapping = map(cmMsec1, 0, 14, 0, 280);
       analogWrite(BUZZER_PORT, 10);
       delay(timeMapping/2);
       analogWrite(BUZZER_PORT, 0);

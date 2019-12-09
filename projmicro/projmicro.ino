@@ -21,7 +21,7 @@ const int motors_ports[8] = {
   MOTOR_D_0, MOTOR_D_1
 };
 
-int lista[1000][2];
+int past_values[1000][2];
 
 const byte ledPin = 13;
 const byte interruptPin = 20;
@@ -44,30 +44,56 @@ void setup(){
   //parking interruption
   pinMode(ledPin, OUTPUT);
   pinMode(interruptPin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(interruptPin), park , FALLING);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), state_changer , FALLING);
 }
 
 
+int registred_values = 0; // array counter
+
 void loop(){
   
-  Serial.println(state);
+  //Serial.println(state);
   digitalWrite(ledPin, state);
 
-  int y = analogRead(AXIS_Y);
   int x = analogRead(AXIS_X);
-/*
-  if(state == HIGH){
-    for(int i=0; i < 1000; i++){
-      lista[i][0] = x;
-      lista[i][1] = y;
-      }
-  }else if(state == LOW){
-    for(int i=0; i < 1000; i++){
-      control(lista[i][0], lista[i][1]);
-      }
+  int y = analogRead(AXIS_Y);
+
+ if (state == 0){
+   // free mode control
+  Serial.println("Free mode!");
+  control(x, y);
+
+ } else if (state == 1){
+  // recording
+  
+  while (state == 1) {
+    Serial.println("Recording!");
+    past_values[registred_values][0] = analogRead(AXIS_X); //set x
+    past_values[registred_values][1] = analogRead(AXIS_Y); //set y
+    control(past_values[registred_values][0], past_values[registred_values][1]);
+
+    registred_values++;
+    
+    if (registred_values > 999) {
+      Serial.println("Maximum exedeed.");
+      state = 2;
+      break;
     }
-*/
-   control(x, y);
+  }
+
+ } else if (state == 2){
+  // executing
+
+  for (int i = 0; i < registred_values; i++){
+    Serial.println("Execunting.");
+    control(past_values[i][0], past_values[i][1]);
+  }
+
+  registred_values = 0;
+
+  state = 0;
+
+ }
  
 }
 
@@ -83,8 +109,6 @@ void control(int x, int y){
     direita = map(x, 512, 1023, 100, 0);
     esquerda = 100;
   }
-
-
 
   if (y < 490){ //Front (or forward)
     int velocidade = map(y, 511, 0, 0, 255);
@@ -124,47 +148,11 @@ void control(int x, int y){
     
   
   }
-void park() {
-     state = !state;
-     for (int i = 0; i < 5000; i++){
-     analogWrite(MOTOR_A_0, 0);
-     analogWrite(MOTOR_A_1, 255);
+void state_changer() {
+     if (state == 0) {
+      state = 1;
+     } else if (state == 1) {
+      state = 2;
+     }
 
-     analogWrite(MOTOR_B_0, 0);
-     analogWrite(MOTOR_B_1, 255);
-     
-     analogWrite(MOTOR_C_0, 0);
-     analogWrite(MOTOR_C_1, 0);
-
-     analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, 0);
-      }
-
-     for (int i = 0; i < 2000; i++){
-     analogWrite(MOTOR_A_0, 0);
-     analogWrite(MOTOR_A_1, 255);
-
-     analogWrite(MOTOR_B_0, 0);
-     analogWrite(MOTOR_B_1, 255);
-     
-     analogWrite(MOTOR_C_0, 0);
-     analogWrite(MOTOR_C_1, 255);
-
-     analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, 255);
-      }
-
-     for (int i = 0; i < 7500; i++){
-     analogWrite(MOTOR_A_0, 0);
-     analogWrite(MOTOR_A_1, 0);
-
-     analogWrite(MOTOR_B_0, 0);
-     analogWrite(MOTOR_B_1, 0);
-     
-     analogWrite(MOTOR_C_0, 0);
-     analogWrite(MOTOR_C_1, 255);
-
-     analogWrite(MOTOR_D_0, 0);
-     analogWrite(MOTOR_D_1, 255);
-      }
-  }
+ }

@@ -117,6 +117,7 @@ void loop(){
   
   while (state == 1) {
     Serial.println("Recording!");
+    
     past_values[registred_values][0] = analogRead(AXIS_X); //set x
     past_values[registred_values][1] = analogRead(AXIS_Y); //set y
     control(past_values[registred_values][0], past_values[registred_values][1]);
@@ -139,6 +140,10 @@ void loop(){
   for (int i = 0; i < registred_values; i++){
     Serial.println("Execunting.");
     control(past_values[i][0], past_values[i][1]);
+
+    if (state != 2) break;
+    
+    
   }
 
   registred_values = 0;
@@ -205,6 +210,8 @@ void state_changer() {
       state = 1;
      } else if (state == 1) {
       state = 2;
+     } else if (state == 2) {
+      state = 0; 
      }
 }
 

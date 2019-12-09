@@ -11,9 +11,9 @@ const int MOTOR_D_1 = 9;
 // joystick variables
 const int AXIS_X = A0;
 const int AXIS_Y = A1;
-//const int JOY_BTN = ;
+const int JOY_BTN = 20;
 
-
+// motors batch
 const int motors_ports[8] = {
   MOTOR_A_0, MOTOR_A_1, 
   MOTOR_B_0, MOTOR_B_1,
@@ -21,14 +21,23 @@ const int motors_ports[8] = {
   MOTOR_D_0, MOTOR_D_1
 };
 
-int past_values[1000][2];
+// 7 segment display
+int display_mask_value[10] = {0b11000000, 0b11111001, 0b10100100,
+                  0b10110000, 0b10011001, 0b10010010,
+                  0b10000010, 0b11111000 ,0b10000000, 0b10010000 };
+
+
+int past_values[1500][2];
 
 const byte ledPin = 13;
-const byte interruptPin = 20;
+const byte interruptPin = JOY_BTN;
 volatile byte state = LOW;
 
 
 void setup(){
+  DDRL = 0xFF;
+  PORTL = display_mask_value[9];
+
   // setup motors ports to output
   for (int i = 0; i < 8; i++){
     pinMode(motors_ports[i], OUTPUT);
@@ -73,6 +82,8 @@ void loop(){
     control(past_values[registred_values][0], past_values[registred_values][1]);
 
     registred_values++;
+
+    display_number(registred_values / 100);
     
     if (registred_values > 999) {
       Serial.println("Maximum exedeed.");
@@ -124,7 +135,7 @@ void control(int x, int y){
      analogWrite(MOTOR_D_0, velocidade * esquerda / 100);
      analogWrite(MOTOR_D_1, 0);
  
-    }
+   }
    else if(y > 530){ //back
      int velocidade = map(y, 512, 1023, 0, 255);
      analogWrite(MOTOR_A_0, 0);
@@ -154,5 +165,10 @@ void state_changer() {
      } else if (state == 1) {
       state = 2;
      }
+}
 
- }
+void display_number(int number) {
+  
+}
+
+ 

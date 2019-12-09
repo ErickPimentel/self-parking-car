@@ -24,8 +24,9 @@ const int motors_ports[8] = {
 // 7 segment display
 int display_mask_value[10] = {0b11000000, 0b11111001, 0b10100100,
                   0b10110000, 0b10011001, 0b10010010,
-                  0b10000010, 0b11111000 ,0b10000000, 0b10010000 };
+                  0b10000010, 0b11111000 ,0b10000000, 0b10010000};
 
+int letters_mask[2] = {0b10001110, 0b10000110}; // 0: F, 1: E
 
 int past_values[1500][2];
 
@@ -36,7 +37,7 @@ volatile byte state = LOW;
 
 void setup(){
   DDRL = 0xFF;
-  PORTL = display_mask_value[9];
+  PORTL = 0b11111111;
 
   // setup motors ports to output
   for (int i = 0; i < 8; i++){
@@ -68,7 +69,8 @@ void loop(){
   int y = analogRead(AXIS_Y);
 
  if (state == 0){
-   // free mode control
+  // free mode control
+  PORTL = letters_mask[0];
   Serial.println("Free mode!");
   control(x, y);
 
@@ -94,7 +96,8 @@ void loop(){
 
  } else if (state == 2){
   // executing
-
+  blink_display();
+  PORTL = letters_mask[1];
   for (int i = 0; i < registred_values; i++){
     Serial.println("Execunting.");
     control(past_values[i][0], past_values[i][1]);
@@ -168,7 +171,19 @@ void state_changer() {
 }
 
 void display_number(int number) {
-  
+  if (number < 10) {
+    PORTL = display_mask_value[number];
+  }
 }
 
+
+void blink_display() {
+  int last_value = PORTL;
+  for (int i = 0; i < 5; i++){
+    PORTL = 0xFF;
+    delay(100);
+    PORTL = last_value;
+    delay(100);
+  }
+}
  
